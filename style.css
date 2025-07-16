@@ -1,1 +1,18 @@
-
+.ramo {
+  background-color: #A78CFF;
+  padding: 8px;
+  border-radius: 5px;
+  color: white;
+  margin: 5px 0;
+  text-align: center;
+  cursor: pointer;
+}
+.ramo.aprobado {
+  background-color: #7C4FFF;
+  text-decoration: line-through;
+}
+.ramo.bloqueado {
+  background-color: #ccc;
+  pointer-events: none;
+  cursor: not-allowed;
+}

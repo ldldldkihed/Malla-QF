@@ -1,9 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Malla Interactiva</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malla QyF UChile</title>
+    <style>
+        /* Estilos completos (omitiendo por brevedad) */
+        body { font-family: Arial; margin: 20px; }
+        .semester { background: #f0f0f0; padding: 15px; margin-bottom: 20px; }
+        .course { background: #A78CFF; color: white; padding: 8px; margin: 5px; cursor: pointer; }
+        .approved { background: #7C4FFF; text-decoration: line-through; }
+        .locked { background: #e0e0e0; cursor: not-allowed; }
+    </style>
 </head>
 <body>
-  <!-- contenido aquí -->
-  <script src="script.js"></script>
+    <h1>Malla QyF UChile</h1>
+    
+    <!-- Semestre 1 -->
+    <div class="semester">
+        <h2>1er Semestre</h2>
+        <div class="course" data-course="1" data-credits="8" onclick="toggleApproval(this)">Química General I <span>8 SCT</span></div>
+        <div class="course" data-course="2" data-credits="4" onclick="toggleApproval(this)">Técnicas de Laboratorio Químico <span>4 SCT</span></div>
+        <!-- Todos los ramos del semestre 1 -->
+    </div>
+
+    <!-- Semestres 2 al 11 (estructura similar) -->
+    <div class="semester">
+        <h2>2do Semestre</h2>
+        <div class="course locked" data-course="7" data-credits="5" data-prerequisites="1" onclick="checkPrerequisites(this)">Química General II <span>5 SCT</span></div>
+        <!-- Todos los ramos hasta el semestre 11 -->
+    </div>
+
+    <script>
+        // Sistema de guardado y requisitos
+        const approvedCourses = JSON.parse(localStorage.getItem('approvedCourses')) || {};
+
+        function toggleApproval(element) {
+            const courseId = element.getAttribute('data-course');
+            if (approvedCourses[courseId]) {
+                element.classList.remove('approved');
+                delete approvedCourses[courseId];
+            } else {
+                element.classList.add('approved');
+                approvedCourses[courseId] = true;
+            }
+            localStorage.setItem('approvedCourses', JSON.stringify(approvedCourses));
+        }
+
+        function checkPrerequisites(element) {
+            const prerequisites = element.getAttribute('data-prerequisites');
+            if (!prerequisites || prerequisites.split(',').every(p => approvedCourses[p])) {
+                element.classList.remove('locked');
+                toggleApproval(element);
+            } else {
+                alert("Faltan requisitos para este ramo.");
+            }
+        }
+    </script>
 </body>
+</html>

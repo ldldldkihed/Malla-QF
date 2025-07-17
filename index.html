@@ -2,10 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Malla QyF UChile</title>
     <style>
-        /* Estilos completos (omitiendo por brevedad) */
         body { font-family: Arial; margin: 20px; }
         .semester { background: #f0f0f0; padding: 15px; margin-bottom: 20px; }
         .course { background: #A78CFF; color: white; padding: 8px; margin: 5px; cursor: pointer; }
@@ -21,18 +19,25 @@
         <h2>1er Semestre</h2>
         <div class="course" data-course="1" data-credits="8" onclick="toggleApproval(this)">Química General I <span>8 SCT</span></div>
         <div class="course" data-course="2" data-credits="4" onclick="toggleApproval(this)">Técnicas de Laboratorio Químico <span>4 SCT</span></div>
-        <!-- Todos los ramos del semestre 1 -->
+        <div class="course" data-course="3" data-credits="8" onclick="toggleApproval(this)">Introducción al Álgebra y Cálculo <span>8 SCT</span></div>
+        <div class="course" data-course="4" data-credits="3" onclick="toggleApproval(this)">Orientación Farmacéutica <span>3 SCT</span></div>
+        <div class="course" data-course="5" data-credits="4" onclick="toggleApproval(this)">Curso de Formación General <span>4 SCT</span></div>
+        <div class="course" data-course="6" data-credits="3" onclick="toggleApproval(this)">Inglés I <span>3 SCT</span></div>
     </div>
 
-    <!-- Semestres 2 al 11 (estructura similar) -->
+    <!-- Semestre 2 -->
     <div class="semester">
         <h2>2do Semestre</h2>
         <div class="course locked" data-course="7" data-credits="5" data-prerequisites="1" onclick="checkPrerequisites(this)">Química General II <span>5 SCT</span></div>
-        <!-- Todos los ramos hasta el semestre 11 -->
+        <div class="course locked" data-course="8" data-credits="3" data-prerequisites="1,2" onclick="checkPrerequisites(this)">Laboratorio de Química General <span>3 SCT</span></div>
+        <div class="course locked" data-course="9" data-credits="5" data-prerequisites="3" onclick="checkPrerequisites(this)">Física General <span>5 SCT</span></div>
+        <div class="course locked" data-course="10" data-credits="6" data-prerequisites="3" onclick="checkPrerequisites(this)">Cálculo Diferencial e Integral <span>6 SCT</span></div>
+        <div class="course" data-course="11" data-credits="3" onclick="toggleApproval(this)">Química Transformadora <span>3 SCT</span></div>
+        <div class="course locked" data-course="12" data-credits="5" data-prerequisites="2" onclick="checkPrerequisites(this)">Biología Celular <span>5 SCT</span></div>
+        <div class="course locked" data-course="13" data-credits="3" data-prerequisites="6" onclick="checkPrerequisites(this)">Inglés II <span>3 SCT</span></div>
     </div>
 
     <script>
-        // Sistema de guardado y requisitos
         const approvedCourses = JSON.parse(localStorage.getItem('approvedCourses')) || {};
 
         function toggleApproval(element) {
@@ -59,3 +64,169 @@
     </script>
 </body>
 </html>
+<!-- Semestre 3 -->
+<div class="semester">
+    <h2>3er Semestre</h2>
+    <div class="course locked" data-course="14" data-credits="5" data-prerequisites="7" onclick="checkPrerequisites(this)">Química Orgánica <span>5 SCT</span></div>
+    <div class="course locked" data-course="15" data-credits="5" data-prerequisites="7,8" onclick="checkPrerequisites(this)">Química Analítica <span>5 SCT</span></div>
+    <div class="course locked" data-course="16" data-credits="4" data-prerequisites="7,8" onclick="checkPrerequisites(this)">Laboratorio I Química Orgánica <span>4 SCT</span></div>
+    <div class="course locked" data-course="17" data-credits="4" data-prerequisites="10" onclick="checkPrerequisites(this)">Estadística y Análisis de Datos <span>4 SCT</span></div>
+    <div class="course locked" data-course="18" data-credits="2" data-prerequisites="4,11" onclick="checkPrerequisites(this)">Fundamentos de Ciencias Farmacéuticas <span>2 SCT</span></div>
+    <div class="course locked" data-course="19" data-credits="5" data-prerequisites="9,12" onclick="checkPrerequisites(this)">Fisiología Celular <span>5 SCT</span></div>
+    <div class="course" data-course="20" data-credits="2" onclick="toggleApproval(this)">Curso de Formación General <span>2 SCT</span></div>
+    <div class="course locked" data-course="21" data-credits="3" data-prerequisites="13" onclick="checkPrerequisites(this)">Inglés III <span>3 SCT</span></div>
+</div>
+<!-- Semestre 4 -->
+<div class="semester">
+    <h2>4to Semestre</h2>
+    <div class="course locked" data-course="22" data-credits="5" data-prerequisites="7" onclick="checkPrerequisites(this)">Química Orgánica II <span>5 SCT</span></div>
+    <div class="course locked" data-course="23" data-credits="4" data-prerequisites="8,15,17" onclick="checkPrerequisites(this)">Laboratorio de Análisis Química <span>4 SCT</span></div>
+    <div class="course locked" data-course="24" data-credits="5" data-prerequisites="15" onclick="checkPrerequisites(this)">Química Analítica II <span>5 SCT</span></div>
+    <div class="course locked" data-course="25" data-credits="6" data-prerequisites="9,10,14" onclick="checkPrerequisites(this)">Fisicoquímica I <span>6 SCT</span></div>
+    <div class="course locked" data-course="26" data-credits="4" data-prerequisites="19" onclick="checkPrerequisites(this)">Fisiología en Sistemas <span>4 SCT</span></div>
+    <div class="course locked" data-course="27" data-credits="3" data-prerequisites="17,18" onclick="checkPrerequisites(this)">Práctica Intermedia <span>3 SCT</span></div>
+    <div class="course locked" data-course="28" data-credits="3" data-prerequisites="21" onclick="checkPrerequisites(this)">Inglés IV <span>3 SCT</span></div>
+</div>
+<!-- Semestre 5 -->
+<div class="semester">
+    <h2>5to Semestre</h2>
+    <div class="course locked" data-course="29" data-credits="4" data-prerequisites="23,24" onclick="checkPrerequisites(this)">
+        Laboratorio de Análisis Instrumental <span>4 SCT</span>
+    </div>
+    <div class="course locked" data-course="30" data-credits="7" data-prerequisites="22,24" onclick="checkPrerequisites(this)">
+        Botánica y Farmacognosia <span>7 SCT</span>
+    </div>
+    <div class="course locked" data-course="31" data-credits="5" data-prerequisites="22" onclick="checkPrerequisites(this)">
+        Química de Heterocíclicos y Análisis Espectroscópico <span>5 SCT</span>
+    </div>
+    <div class="course locked" data-course="32" data-credits="5" data-prerequisites="22" onclick="checkPrerequisites(this)">
+        Bioquímica <span>5 SCT</span>
+    </div>
+    <div class="course locked" data-course="33" data-credits="6" data-prerequisites="23,26" onclick="checkPrerequisites(this)">
+        Farmacología General <span>6 SCT</span>
+    </div>
+    <div class="course locked" data-course="34" data-credits="3" data-prerequisites="18" onclick="checkPrerequisites(this)">
+        Gestión de Calidad <span>3 SCT</span>
+    </div>
+</div>
+<!-- Semestre 6 -->
+<div class="semester">
+    <h2>6to Semestre</h2>
+    <div class="course locked" data-course="35" data-credits="5" data-prerequisites="32" onclick="checkPrerequisites(this)">
+        Microbiología <span>5 SCT</span>
+    </div>
+    <div class="course locked" data-course="36" data-credits="5" data-prerequisites="31,33" onclick="checkPrerequisites(this)">
+        Farmacoquímica I <span>5 SCT</span>
+    </div>
+    <div class="course locked" data-course="37" data-credits="5" data-prerequisites="33" onclick="checkPrerequisites(this)">
+        Farmacología de Sistemas I <span>5 SCT</span>
+    </div>
+    <div class="course locked" data-course="38" data-credits="5" data-prerequisites="26,32" onclick="checkPrerequisites(this)">
+        Fisiopatología Molecular <span>5 SCT</span>
+    </div>
+    <div class="course locked" data-course="39" data-credits="4" data-prerequisites="27,34" onclick="checkPrerequisites(this)">
+        Legislación Farmacéutica <span>4 SCT</span>
+    </div>
+    <div class="course locked" data-course="40" data-credits="6" data-prerequisites="25" onclick="checkPrerequisites(this)">
+        Fisicoquímica Farmacéutica <span>6 SCT</span>
+    </div>
+</div>
+<!-- Semestre 7 -->
+<div class="semester">
+    <h2>7mo Semestre</h2>
+    <div class="course locked" data-course="41" data-credits="5" data-prerequisites="38" onclick="checkPrerequisites(this)">
+        Fisiopatología y Semiología <span>5 SCT</span>
+    </div>
+    <div class="course locked" data-course="42" data-credits="5" data-prerequisites="36" onclick="checkPrerequisites(this)">
+        Farmacoquímica II <span>5 SCT</span>
+    </div>
+    <div class="course locked" data-course="43" data-credits="6" data-prerequisites="35,37" onclick="checkPrerequisites(this)">
+        Farmacología de Sistemas II <span>6 SCT</span>
+    </div>
+    <div class="course locked" data-course="44" data-credits="3" data-prerequisites="39" onclick="checkPrerequisites(this)">
+        Salud Pública <span>3 SCT</span>
+    </div>
+    <div class="course locked" data-course="45" data-credits="6" data-prerequisites="39,40" onclick="checkPrerequisites(this)">
+        Tecnología Farmacéutica <span>6 SCT</span>
+    </div>
+    <div class="course locked" data-course="46" data-credits="5" data-prerequisites="40" onclick="checkPrerequisites(this)">
+        Operaciones Unitarias para QyF <span>5 SCT</span>
+    </div>
+</div>
+<!-- Semestre 8 -->
+<div class="semester">
+    <h2>8vo Semestre</h2>
+    <div class="course locked" data-course="47" data-credits="5" data-prerequisites="29,42" onclick="checkPrerequisites(this)">
+        Análisis de Medicamentos, Doping y Drogas de Abuso <span>5 SCT</span>
+    </div>
+    <div class="course locked" data-course="48" data-credits="3" data-prerequisites="41" onclick="checkPrerequisites(this)">
+        Nutrición Clínica <span>3 SCT</span>
+    </div>
+    <div class="course locked" data-course="49" data-credits="4" data-prerequisites="41" onclick="checkPrerequisites(this)">
+        Bioquímica Clínica <span>4 SCT</span>
+    </div>
+    <div class="course locked" data-course="50" data-credits="6" data-prerequisites="45" onclick="checkPrerequisites(this)">
+        Biofarmacia y Farmacocinética <span>6 SCT</span>
+    </div>
+    <div class="course locked" data-course="51" data-credits="6" data-prerequisites="45,46" onclick="checkPrerequisites(this)">
+        Tecnología Farmacéutica II <span>6 SCT</span>
+    </div>
+    <div class="course locked" data-course="52" data-credits="6" data-prerequisites="45,46" onclick="checkPrerequisites(this)">
+        Administración y Gestión Farmacéutica <span>6 SCT</span>
+    </div>
+    <div class="course locked" data-course="53" data-credits="3" data-prerequisites="17,44" onclick="checkPrerequisites(this)">
+        Estadística Farmacéutica <span>3 SCT</span>
+    </div>
+</div>
+<!-- Semestre 9 -->
+<div class="semester">
+    <h2>9no Semestre</h2>
+    <div class="course locked" data-course="54" data-credits="6" data-prerequisites="49,50" onclick="checkPrerequisites(this)">
+        Farmacología Clínica <span>6 SCT</span>
+    </div>
+    <div class="course locked" data-course="55" data-credits="4" data-prerequisites="29,48" onclick="checkPrerequisites(this)">
+        Bromatología <span>4 SCT</span>
+    </div>
+    <div class="course locked" data-course="56" data-credits="5" data-prerequisites="43,49" onclick="checkPrerequisites(this)">
+        Toxicología <span>5 SCT</span>
+    </div>
+    <div class="course locked" data-course="57" data-credits="4" data-prerequisites="44,52" onclick="checkPrerequisites(this)">
+        Farmacia Asistencial <span>4 SCT</span>
+    </div>
+    <div class="course locked" data-course="58" data-credits="4" data-prerequisites="51" onclick="checkPrerequisites(this)">
+        Tecnología Cosmética <span>4 SCT</span>
+    </div>
+    <div class="course" data-course="59" data-credits="7" onclick="toggleApproval(this)">
+        Electivo Especializado <span>7 SCT</span>
+    </div>
+</div>
+<!-- Semestre 10 -->
+<div class="semester">
+    <h2>10mo Semestre</h2>
+    <div class="course locked" data-course="60" data-credits="5" data-prerequisites="54" onclick="checkPrerequisites(this)">
+        Farmacia Clínica <span>5 SCT</span>
+    </div>
+    <div class="course locked" data-course="61" data-credits="7" data-prerequisites="52,54,56" onclick="checkPrerequisites(this)">
+        Práctica Profesional en Farmacia Comunitaria <span>7 SCT</span>
+    </div>
+    <div class="course locked" data-course="62" data-credits="4" data-prerequisites="38,51" onclick="checkPrerequisites(this)">
+        Biotecnología Farmacéutica <span>4 SCT</span>
+    </div>
+    <div class="course locked" data-course="63" data-credits="3" data-prerequisites="44,52,54" onclick="checkPrerequisites(this)">
+        Economía en Salud y Marketing Farmacéutico <span>3 SCT</span>
+    </div>
+    <div class="course locked" data-course="64" data-credits="3" data-prerequisites="53" onclick="checkPrerequisites(this)">
+        Innovación y Proyectos <span>3 SCT</span>
+    </div>
+    <div class="course" data-course="65" data-credits="8" onclick="toggleApproval(this)">
+        Electivos Especializados <span>8 SCT</span>
+    </div>
+</div>
+<!-- Semestre 11 -->
+<div class="semester">
+    <h2>11mo Semestre</h2>
+    <div class="course locked" data-course="66" data-credits="30" data-prerequisites="60,61,62,63,64,65" onclick="checkPrerequisites(this)">
+        Actividad Final de Titulación <span>30 SCT</span>
+        <div class="prerequisite-info">Requisito: Haber aprobado todos los ramos anteriores</div>
+    </div>
+</div>

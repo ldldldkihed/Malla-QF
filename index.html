@@ -37,33 +37,84 @@
         <div class="course locked" data-course="13" data-credits="3" data-prerequisites="6" onclick="checkPrerequisites(this)">Inglés II <span>3 SCT</span></div>
     </div>
 
-    <script>
-        const approvedCourses = JSON.parse(localStorage.getItem('approvedCourses')) || {};
+  <script>
+    // Objeto para almacenar ramos aprobados
+    const approvedCourses = JSON.parse(localStorage.getItem('approvedCourses')) || {};
+    let totalCredits = 0;
+    let approvedCount = 0;
 
-        function toggleApproval(element) {
-            const courseId = element.getAttribute('data-course');
-            if (approvedCourses[courseId]) {
-                element.classList.remove('approved');
-                delete approvedCourses[courseId];
-            } else {
-                element.classList.add('approved');
-                approvedCourses[courseId] = true;
-            }
-            localStorage.setItem('approvedCourses', JSON.stringify(approvedCourses));
+    // Función para marcar/desmarcar ramos
+    function toggleApproval(element) {
+        const courseId = element.getAttribute('data-course');
+        const credits = parseInt(element.getAttribute('data-credits'));
+        
+        if (approvedCourses[courseId]) {
+            element.classList.remove('approved');
+            delete approvedCourses[courseId];
+            totalCredits -= credits;
+            approvedCount--;
+        } else {
+            element.classList.add('approved');
+            approvedCourses[courseId] = true;
+            totalCredits += credits;
+            approvedCount++;
         }
+        
+        localStorage.setItem('approvedCourses', JSON.stringify(approvedCourses));
+        updateProgress();
+        updateDependentCourses(); // ¡Esta línea es la clave!
+    }
 
-        function checkPrerequisites(element) {
+    // Función para verificar requisitos
+    function checkPrerequisites(element) {
+        if (element.classList.contains('locked')) {
             const prerequisites = element.getAttribute('data-prerequisites');
-            if (!prerequisites || prerequisites.split(',').every(p => approvedCourses[p])) {
+            if (prerequisites && prerequisites.split(',').every(p => approvedCourses[p])) {
                 element.classList.remove('locked');
                 toggleApproval(element);
             } else {
-                alert("Faltan requisitos para este ramo.");
+                alert('No cumples con los requisitos para este ramo');
             }
+        } else {
+            toggleApproval(element);
         }
-    </script>
-</body>
-</html>
+    }
+
+    // Función NUEVA para desbloquear ramos dependientes
+    function updateDependentCourses() {
+        document.querySelectorAll('.course.locked').forEach(course => {
+            const prerequisites = course.getAttribute('data-prerequisites');
+            if (prerequisites) {
+                const allMet = prerequisites.split(',').every(p => approvedCourses[p]);
+                if (allMet) course.classList.remove('locked');
+            }
+        });
+    }
+
+    // Función para actualizar el progreso
+    function updateProgress() {
+        const progress = Math.round((totalCredits / 240) * 100);
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+        document.getElementById('progress-bar').textContent = `${progress}%`;
+        document.getElementById('approved-credits').textContent = totalCredits;
+        document.getElementById('approved-courses').textContent = approvedCount;
+    }
+
+    // Inicialización al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        // Marcar ramos aprobados guardados
+        document.querySelectorAll('.course').forEach(course => {
+            const courseId = course.getAttribute('data-course');
+            if (approvedCourses[courseId]) {
+                course.classList.add('approved');
+                totalCredits += parseInt(course.getAttribute('data-credits'));
+                approvedCount++;
+            }
+        });
+        updateProgress();
+        updateDependentCourses(); // Desbloquear ramos disponibles al inicio
+    });
+</script>
 <!-- Semestre 3 -->
 <div class="semester">
     <h2>3er Semestre</h2>

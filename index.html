@@ -203,76 +203,68 @@
     </div>
 </div>
 <script>
-    // Sistema mejorado - Versión 2.0
     document.addEventListener('DOMContentLoaded', function() {
+        // 1. Cargar progreso guardado
         const approvedCourses = JSON.parse(localStorage.getItem('approvedCourses')) || {};
-
-        // Función principal mejorada
+        
+        // 2. Función principal MEJORADA
         window.toggleApproval = function(element) {
-    const courseId = element.getAttribute('data-course');
-    const credits = parseInt(element.getAttribute('data-credits'));
-    
-    // Cambia el estado de aprobación
-    approvedCourses[courseId] = !approvedCourses[courseId];
-    element.classList.toggle('approved', approvedCourses[courseId]);
-    
-    localStorage.setItem('approvedCourses', JSON.stringify(approvedCourses));
-    updateDependentCourses(); // Actualiza ramos dependientes
-    
-    // Nueva función para rebloquear ramos si pierden requisitos
-    recheckLockedStatus();
-};
+            const courseId = element.getAttribute('data-course');
+            
+            // Cambiar estado
+            approvedCourses[courseId] = !approvedCourses[courseId];
+            element.classList.toggle('approved', approvedCourses[courseId]);
+            
+            // Guardar y actualizar
+            localStorage.setItem('approvedCourses', JSON.stringify(approvedCourses));
+            updateAllCoursesStatus();
+        };
 
-// Función NUEVA para rebloquear ramos cuando pierden requisitos
-function recheckLockedStatus() {
-    document.querySelectorAll('.course:not(.locked)').forEach(course => {
-        const prereqs = course.getAttribute('data-prerequisites');
-        if (prereqs && !prereqs.split(',').every(p => approvedCourses[p])) {
-            if (!course.classList.contains('approved')) {
-                course.classList.add('locked');
-            }
-        }
-    });
-}
-
-        // Verificador de requisitos mejorado
+        // 3. Verificador de requisitos (MEJORADO)
         window.checkPrerequisites = function(element) {
             if (element.classList.contains('locked')) {
                 const prereqs = element.getAttribute('data-prerequisites');
-                const missing = prereqs ? prereqs.split(',').filter(p => !approvedCourses[p]) : [];
+                const canUnlock = !prereqs || prereqs.split(',').every(p => approvedCourses[p]);
                 
-                if (missing.length === 0) {
+                if (canUnlock) {
                     element.classList.remove('locked');
                     toggleApproval(element);
                 } else {
-                    alert(`Te faltan ${missing.length} requisitos`);
+                    alert('Requisitos faltantes');
                 }
             } else {
                 toggleApproval(element);
             }
         };
 
-        // Actualizador automático
-        function updateDependentCourses() {
-            document.querySelectorAll('.course.locked').forEach(course => {
+        // 4. Función NUEVA que controla TODO (clave)
+        function updateAllCoursesStatus() {
+            document.querySelectorAll('.course').forEach(course => {
+                const courseId = course.getAttribute('data-course');
                 const prereqs = course.getAttribute('data-prerequisites');
-                if (!prereqs || prereqs.split(',').every(p => approvedCourses[p])) {
+                
+                // Actualizar estado de bloqueo
+                if (prereqs) {
+                    const shouldLock = !prereqs.split(',').every(p => approvedCourses[p]);
+                    course.classList.toggle('locked', shouldLock && !approvedCourses[courseId]);
+                }
+                
+                // Mantener aprobados visibles
+                if (approvedCourses[courseId]) {
+                    course.classList.add('approved');
                     course.classList.remove('locked');
                 }
             });
         }
 
-        // Carga inicial
+        // 5. Inicialización
         document.querySelectorAll('.course').forEach(course => {
             const courseId = course.getAttribute('data-course');
             if (approvedCourses[courseId]) {
                 course.classList.add('approved');
             }
-            if (course.getAttribute('data-prerequisites')) {
-                course.classList.add('locked');
-            }
         });
-        updateDependentCourses();
+        updateAllCoursesStatus(); // Estado inicial
     });
 </script>
 </body>

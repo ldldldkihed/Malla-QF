@@ -204,67 +204,79 @@
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // 1. Cargar progreso guardado
         const approvedCourses = JSON.parse(localStorage.getItem('approvedCourses')) || {};
-        
-        // 2. Función principal MEJORADA
+
+        // Función para des/marcar ramos
         window.toggleApproval = function(element) {
             const courseId = element.getAttribute('data-course');
-            
-            // Cambiar estado
             approvedCourses[courseId] = !approvedCourses[courseId];
             element.classList.toggle('approved', approvedCourses[courseId]);
-            
-            // Guardar y actualizar
             localStorage.setItem('approvedCourses', JSON.stringify(approvedCourses));
-            updateAllCoursesStatus();
+            updateAllCoursesStatus(); // Actualiza toda la malla
         };
 
-        // 3. Verificador de requisitos (MEJORADO)
+        // Verificador de requisitos
         window.checkPrerequisites = function(element) {
             if (element.classList.contains('locked')) {
                 const prereqs = element.getAttribute('data-prerequisites');
-                const canUnlock = !prereqs || prereqs.split(',').every(p => approvedCourses[p]);
-                
-                if (canUnlock) {
+                if (!prereqs || prereqs.split(',').every(p => approvedCourses[p])) {
                     element.classList.remove('locked');
                     toggleApproval(element);
                 } else {
-                    alert('Requisitos faltantes');
+                    alert('Faltan requisitos: ' + getMissingPrereqs(prereqs));
                 }
             } else {
                 toggleApproval(element);
             }
         };
 
-        // 4. Función NUEVA que controla TODO (clave)
+        // Nueva función para mostrar requisitos faltantes
+        function getMissingPrereqs(prereqs) {
+            return prereqs.split(',').filter(p => !approvedCourses[p]).map(p => {
+                const course = document.querySelector(`[data-course="${p}"]`);
+                return course ? course.textContent.split(' SCT')[0] : p;
+            }).join(', ');
+        }
+
+        // Función PRINCIPAL mejorada (ahora con cascada)
         function updateAllCoursesStatus() {
-            document.querySelectorAll('.course').forEach(course => {
+            const allCourses = document.querySelectorAll('.course');
+            
+            // Primera pasada: actualizar estado de bloqueo
+            allCourses.forEach(course => {
                 const courseId = course.getAttribute('data-course');
                 const prereqs = course.getAttribute('data-prerequisites');
                 
-                // Actualizar estado de bloqueo
-                if (prereqs) {
+                if (prereqs && !approvedCourses[courseId]) {
                     const shouldLock = !prereqs.split(',').every(p => approvedCourses[p]);
-                    course.classList.toggle('locked', shouldLock && !approvedCourses[courseId]);
-                }
-                
-                // Mantener aprobados visibles
-                if (approvedCourses[courseId]) {
-                    course.classList.add('approved');
-                    course.classList.remove('locked');
+                    course.classList.toggle('locked', shouldLock);
                 }
             });
+
+            // Segunda pasada: desbloquear en cascada
+            let changed;
+            do {
+                changed = false;
+                allCourses.forEach(course => {
+                    if (course.classList.contains('locked')) {
+                        const prereqs = course.getAttribute('data-prerequisites');
+                        if (prereqs && prereqs.split(',').every(p => approvedCourses[p])) {
+                            course.classList.remove('locked');
+                            changed = true;
+                        }
+                    }
+                });
+            } while (changed); // Repetir hasta que no haya más cambios
         }
 
-        // 5. Inicialización
+        // Inicialización
         document.querySelectorAll('.course').forEach(course => {
             const courseId = course.getAttribute('data-course');
             if (approvedCourses[courseId]) {
                 course.classList.add('approved');
             }
         });
-        updateAllCoursesStatus(); // Estado inicial
+        updateAllCoursesStatus();
     });
 </script>
 </body>

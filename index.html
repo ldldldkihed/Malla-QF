@@ -206,67 +206,73 @@
     document.addEventListener('DOMContentLoaded', function() {
         const approvedCourses = JSON.parse(localStorage.getItem('approvedCourses')) || {};
 
-        // Función para des/marcar ramos
-        window.toggleApproval = function(element) {
+        // Sistema mejorado de des/marcado
+        window.toggleApproval = function(element, fromPrerequisiteCheck = false) {
             const courseId = element.getAttribute('data-course');
-            approvedCourses[courseId] = !approvedCourses[courseId];
+            
+            // Solo cambia estado si no viene de checkPrerequisites
+            if (!fromPrerequisiteCheck) {
+                approvedCourses[courseId] = !approvedCourses[courseId];
+                localStorage.setItem('approvedCourses', JSON.stringify(approvedCourses));
+            }
+            
             element.classList.toggle('approved', approvedCourses[courseId]);
-            localStorage.setItem('approvedCourses', JSON.stringify(approvedCourses));
-            updateAllCoursesStatus(); // Actualiza toda la malla
+            updateAllCoursesStatus();
         };
 
-        // Verificador de requisitos
+        // Verificador de requisitos MEJORADO
         window.checkPrerequisites = function(element) {
             if (element.classList.contains('locked')) {
                 const prereqs = element.getAttribute('data-prerequisites');
+                
                 if (!prereqs || prereqs.split(',').every(p => approvedCourses[p])) {
                     element.classList.remove('locked');
-                    toggleApproval(element);
+                    toggleApproval(element, true); // Pasa true para evitar doble marcado
                 } else {
-                    alert('Faltan requisitos: ' + getMissingPrereqs(prereqs));
+                    alert(`Faltan: ${getMissingPrereqsNames(prereqs)}`);
                 }
             } else {
                 toggleApproval(element);
             }
         };
 
-        // Nueva función para mostrar requisitos faltantes
-        function getMissingPrereqs(prereqs) {
-            return prereqs.split(',').filter(p => !approvedCourses[p]).map(p => {
-                const course = document.querySelector(`[data-course="${p}"]`);
-                return course ? course.textContent.split(' SCT')[0] : p;
-            }).join(', ');
-        }
-
-        // Función PRINCIPAL mejorada (ahora con cascada)
+        // Función CLAVE: Actualización en cascada
         function updateAllCoursesStatus() {
-            const allCourses = document.querySelectorAll('.course');
-            
-            // Primera pasada: actualizar estado de bloqueo
-            allCourses.forEach(course => {
-                const courseId = course.getAttribute('data-course');
-                const prereqs = course.getAttribute('data-prerequisites');
+            // Lista de todos los ramos con sus dependencias
+            const coursesData = Array.from(document.querySelectorAll('.course')).map(course => ({
+                element: course,
+                id: course.getAttribute('data-course'),
+                prereqs: course.getAttribute('data-prerequisites')?.split(',') || []
+            }));
+
+            // Evaluar cada ramo
+            coursesData.forEach(course => {
+                const hasAllPrereqs = course.prereqs.every(p => approvedCourses[p]);
                 
-                if (prereqs && !approvedCourses[courseId]) {
-                    const shouldLock = !prereqs.split(',').every(p => approvedCourses[p]);
-                    course.classList.toggle('locked', shouldLock);
+                // Actualizar estado de bloqueo
+                if (course.prereqs.length > 0 && !approvedCourses[course.id]) {
+                    course.element.classList.toggle('locked', !hasAllPrereqs);
+                }
+
+                // Auto-marcado solo para ramos sin requisitos
+                if (course.prereqs.length === 0 && course.element.classList.contains('locked')) {
+                    course.element.classList.remove('locked');
+                    if (!approvedCourses[course.id]) {
+                        approvedCourses[course.id] = true;
+                        course.element.classList.add('approved');
+                    }
                 }
             });
 
-            // Segunda pasada: desbloquear en cascada
-            let changed;
-            do {
-                changed = false;
-                allCourses.forEach(course => {
-                    if (course.classList.contains('locked')) {
-                        const prereqs = course.getAttribute('data-prerequisites');
-                        if (prereqs && prereqs.split(',').every(p => approvedCourses[p])) {
-                            course.classList.remove('locked');
-                            changed = true;
-                        }
-                    }
-                });
-            } while (changed); // Repetir hasta que no haya más cambios
+            localStorage.setItem('approvedCourses', JSON.stringify(approvedCourses));
+        }
+
+        // Helper para nombres de requisitos faltantes
+        function getMissingPrereqsNames(prereqs) {
+            return prereqs.split(',').filter(p => !approvedCourses[p]).map(p => {
+                const el = document.querySelector(`[data-course="${p}"]`);
+                return el ? el.textContent.trim().split(' SCT')[0] : p;
+            }).join(', ');
         }
 
         // Inicialización
